@@ -1,0 +1,11 @@
+{
+  "name": "snake-js",
+  "version": "1.0.0",
+  "description": "ryan made snake, and here it is.",
+  "main": "sketch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryan Jensen",
+  "license": "MIT"
+}
