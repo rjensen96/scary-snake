@@ -1,32 +1,41 @@
-let backgroundColor = 25;
-let snake = [];
-let bigSnake;
-let food = [];
+// Constants: gameplay mechanics
+const GAME_FRAME_RATE = 10;
+const FOOD_SPAWN_RATE = 15;
+const FOOD_SCORE_MULTIPLE = 10;
 
-let w = 20;
-let h = 20;
+// Constants: positioning
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = 400;
+const BLOCK_WIDTH = 20;
+const BLOCK_STROKE_WIDTH = 10;
+const SNAKE_START_X = 200;
+const SNAKE_START_Y = 200;
 
-const canvasWidth = 400;
-const canvasHeight = 400;
+// Constants: colors
+const COLOR_BACKGROUND = 25;
+const COLOR_SNAKE = [255, 237, 92];
+const COLOR_FOOD = [240, 100, 245];
 
-let xAdd = 0;
-let yAdd = 0;
-
+// Game state
 let gameStarted = 0;
 let totnum = 0;
 let numEaten = 0;
+let bigSnake;
+let food = [];
+let xAdd = 0;
+let yAdd = 0;
 
 function setup() {
-    createCanvas(canvasWidth, canvasHeight);
+    createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     colorMode(RGB);
-    frameRate(10);
-    background(backgroundColor);
+    frameRate(GAME_FRAME_RATE);
+    background(COLOR_BACKGROUND);
 }
 
 function draw() {
     startGame();
     clear();
-    background(backgroundColor);
+    background(COLOR_BACKGROUND);
     placeFood();
     bigSnake.renderMe();
     bigSnake.move();
@@ -36,7 +45,7 @@ function draw() {
 
 function startGame() {
     if(gameStarted === 0){
-        bigSnake = new Snake(200,200);
+        bigSnake = new Snake(SNAKE_START_X, SNAKE_START_Y);
         gameStarted = 1; // so that we never do this again
     }
 }
@@ -46,15 +55,15 @@ function placeFood() {
     let xOpt = [];
     let yOpt = [];
 
-    for (let x = 0; x < canvasWidth; x+=w) {
+    for (let x = 0; x < CANVAS_WIDTH; x+=BLOCK_WIDTH) {
         xOpt.push(x);
     }
-    
-    for (let y = 0; y < canvasHeight; y+=w) {
+
+    for (let y = 0; y < CANVAS_HEIGHT; y+=BLOCK_WIDTH) {
         yOpt.push(y);
     }
 
-    if (totnum % 15 === 0) {
+    if (totnum % FOOD_SPAWN_RATE === 0) {
         const x = xOpt[Math.floor(Math.random() * xOpt.length)];
         const y = yOpt[Math.floor(Math.random() * yOpt.length)]
         const fruitsnack = new GameBlock(x, y);
@@ -68,15 +77,15 @@ function placeFood() {
 function keyPressed() {
     if (keyCode === UP_ARROW) {
         xAdd = 0;
-        yAdd = (w * -1);
+        yAdd = (BLOCK_WIDTH * -1);
     } else if (keyCode === DOWN_ARROW) {
         xAdd = 0;
-        yAdd = w;
+        yAdd = BLOCK_WIDTH;
     } else if (keyCode === RIGHT_ARROW) {
-        xAdd = w;
+        xAdd = BLOCK_WIDTH;
         yAdd = 0;
     } else if (keyCode === LEFT_ARROW) {
-        xAdd = (w * -1);
+        xAdd = (BLOCK_WIDTH * -1);
         yAdd = 0;
     }
     return false;
@@ -107,7 +116,7 @@ class Snake {
                 const snakeChunk = this.chunks[i];
                 if (snakeChunk.x === copyHead.x && snakeChunk.y === copyHead.y) {
                     frameRate(0);
-                    console.log("final score: " + numEaten * 10);
+                    console.log("final score: " + numEaten * FOOD_SCORE_MULTIPLE);
                 }
             }
         }
@@ -147,7 +156,7 @@ class GameBlock {
     constructor(x, y) {
         this._xval = x;
         this._yval = y;
-        this.myColor = color(255, 237, 92) // default to snake colors
+        this.myColor = color(COLOR_SNAKE) // default to snake colors
     }
 
     get x() {
@@ -159,7 +168,7 @@ class GameBlock {
     }
 
     makeFruity() {
-        this.myColor = color(240, 100, 245); // re-use this class for fruitsnacks. make those fruity.
+        this.myColor = color(COLOR_FOOD); // re-use this class for fruitsnacks. make those fruity.
     }
 
     incrementItem() {
@@ -167,24 +176,24 @@ class GameBlock {
         this._yval += yAdd;
 
         // handle running off the board, re-looping
-        if(this._xval >= canvasWidth) {
+        if(this._xval >= CANVAS_WIDTH) {
             this._xval = 0;
         } else if (this._xval < 0) {
-            this._xval = canvasWidth;
+            this._xval = CANVAS_WIDTH;
         }
-        
-        if (this._yval >= canvasHeight) {
+
+        if (this._yval >= CANVAS_HEIGHT) {
             this._yval = 0;
         } else if (this._yval <= 0) {
-            this._yval = canvasHeight;
+            this._yval = CANVAS_HEIGHT;
         }
         return this;
     }
 
     renderMe() {
         fill(this.myColor);
-        stroke(10);
-        rect(this._xval, this._yval, w, h);
+        stroke(BLOCK_STROKE_WIDTH);
+        rect(this._xval, this._yval, BLOCK_WIDTH, BLOCK_WIDTH);
     }
 }
 
