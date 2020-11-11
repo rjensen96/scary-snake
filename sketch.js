@@ -14,10 +14,12 @@ const SNAKE_START_Y = 200;
 // Constants: colors
 const COLOR_BACKGROUND = 25;
 const COLOR_SNAKE = [255, 237, 92];
+const COLOR_DEADSNAKE = [255, 61, 33];
 const COLOR_FOOD = [240, 100, 245];
 
 // Game state
 let gameStarted = 0;
+let gameEnded = 0;
 let totnum = 0;
 let numEaten = 0;
 let bigSnake;
@@ -91,6 +93,21 @@ function keyPressed() {
     return false;
 }
 
+function gameOver() {
+    gameEnded = 1;
+    bigSnake.changeColor(COLOR_DEADSNAKE);
+    
+    // redraw board so we can turn the snake red
+    // TODO: consider putting this within the Snake.renderMe() method
+    clear();
+    background(COLOR_BACKGROUND);
+    placeFood();
+    bigSnake.renderMe();
+    
+    frameRate(0);
+    console.log("final score: " + numEaten * FOOD_SCORE_MULTIPLE);
+}
+
 class Snake {
     constructor(startX, startY) {
         this.chunks = [new GameBlock(startX, startY)];
@@ -99,6 +116,12 @@ class Snake {
 
     renderMe() {
         this.chunks.forEach(chunk => chunk.renderMe())
+    }
+
+    changeColor(newColor) {
+        this.chunks.forEach(chunk => {
+            chunk.myColor = newColor;
+        })
     }
 
     move() {
@@ -115,8 +138,7 @@ class Snake {
             for (let i = 0; i < this.chunks.length-1; i++) {
                 const snakeChunk = this.chunks[i];
                 if (snakeChunk.x === copyHead.x && snakeChunk.y === copyHead.y) {
-                    frameRate(0);
-                    console.log("final score: " + numEaten * FOOD_SCORE_MULTIPLE);
+                    gameOver();
                 }
             }
         }
@@ -144,6 +166,8 @@ class Snake {
                 this.growing = true;
             }
         }
+
+        console.log('ate');
     }
 
     get headAsCopy() {
@@ -176,13 +200,13 @@ class GameBlock {
         this._yval += yAdd;
 
         // handle running off the board, re-looping
-        if(this._xval > CANVAS_WIDTH) {
+        if(this._xval > CANVAS_WIDTH - 1) {
             this._xval = 0;
         } else if (this._xval < 0) {
             this._xval = CANVAS_WIDTH;
         }
 
-        if (this._yval > CANVAS_HEIGHT) {
+        if (this._yval > CANVAS_HEIGHT - 1) {
             this._yval = 0;
         } else if (this._yval < 0) {
             this._yval = CANVAS_HEIGHT;
