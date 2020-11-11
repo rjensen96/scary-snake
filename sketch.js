@@ -176,15 +176,15 @@ class GameBlock {
         this._yval += yAdd;
 
         // handle running off the board, re-looping
-        if(this._xval >= CANVAS_WIDTH) {
+        if(this._xval > CANVAS_WIDTH) {
             this._xval = 0;
         } else if (this._xval < 0) {
             this._xval = CANVAS_WIDTH;
         }
 
-        if (this._yval >= CANVAS_HEIGHT) {
+        if (this._yval > CANVAS_HEIGHT) {
             this._yval = 0;
-        } else if (this._yval <= 0) {
+        } else if (this._yval < 0) {
             this._yval = CANVAS_HEIGHT;
         }
         return this;
